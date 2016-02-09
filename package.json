@@ -1,0 +1,25 @@
+{
+  "name": "dnrnode",
+  "version": "1.0.0",
+  "description": "special node used in distributed node red",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/namgk/node-red-contrib-dnr.git"
+  },
+  "keywords": [
+    "distributed",
+    "node-red",
+    "node-red",
+    "node"
+  ],
+  "author": "Nam Giang",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/namgk/node-red-contrib-dnr/issues"
+  },
+  "homepage": "https://github.com/namgk/node-red-contrib-dnr#readme"
+}
