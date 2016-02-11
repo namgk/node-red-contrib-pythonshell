@@ -13,7 +13,6 @@
   "keywords": [
     "distributed",
     "node-red",
-    "node-red",
     "node"
   ],
   "author": "Nam Giang",
@@ -21,5 +20,7 @@
   "bugs": {
     "url": "https://github.com/namgk/node-red-contrib-dnr/issues"
   },
-  "homepage": "https://github.com/namgk/node-red-contrib-dnr#readme"
+  "homepage": "https://github.com/namgk/node-red-contrib-dnr#readme",
+  "dependencies": {
+  }
 }
