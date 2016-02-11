@@ -1,5 +1,5 @@
 {
-  "name": "dnrnode",
+  "name": "node-red-contrib-dnr",
   "version": "1.0.0",
   "description": "special node used in distributed node red",
   "main": "index.js",
@@ -22,5 +22,10 @@
   },
   "homepage": "https://github.com/namgk/node-red-contrib-dnr#readme",
   "dependencies": {
-  }
+  },
+  "node-red": {
+        "nodes"     : {
+            "dnr": "dist-wire.js"
+        }
+    }
 }
