@@ -1,31 +1,32 @@
 {
-  "name": "node-red-contrib-dnr",
+  "name": "node-red-contrib-ckants",
   "version": "1.0.2",
-  "description": "special node used in distributed node red",
+  "description": "nodes used to interact with CKAN Timeseries extension",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/namgk/node-red-contrib-dnr.git"
+    "url": "git+https://github.com/namgk/node-red-contrib-ckants.git"
   },
   "keywords": [
     "distributed",
-    "node-red",
+    "ckan",
+    "timeseries",
     "node"
   ],
   "author": "Nam Giang",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/namgk/node-red-contrib-dnr/issues"
+    "url": "https://github.com/namgk/node-red-contrib-ckants/issues"
   },
-  "homepage": "https://github.com/namgk/node-red-contrib-dnr#readme",
+  "homepage": "https://github.com/namgk/node-red-contrib-ckants#readme",
   "dependencies": {
   },
   "node-red": {
         "nodes"     : {
-            "dnr": "dnr/dist-wire.js"
+            "ckants": "src/ckants.js"
         }
     }
 }
