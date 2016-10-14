@@ -20,6 +20,33 @@ var httpclient;
 module.exports = function(RED) {
   "use strict";
 
+  function validateNode(node){
+    if (!node.resourceId){
+      node.error("No resourceId specified");
+      return false;
+    }
+
+    if (!node.auth) {
+      node.error("No credentials specified");
+      return false;
+    }
+
+    node.ckan = node.auth.ckan;
+    node.token = node.auth.token;
+
+    if (!node.ckan){
+      node.error("No CKAN endpoint specified");
+      return false;
+    }
+
+    if (!node.token) {
+      node.error("No CKAN token specified");
+      return false;
+    }
+
+    return true;
+  }
+
   function CkantsInNode(n) {
     RED.nodes.createNode(this,n);
     var node = this;
@@ -29,26 +56,7 @@ module.exports = function(RED) {
     node.totime = n.totime;
     node.auth = RED.nodes.getNode(n.auth);
 
-    if (!node.resourceId){
-      node.error("No resourceId specified");
-      return;
-    }
-
-    if (!node.auth) {
-      node.error("No credentials specified");
-      return;
-    }
-
-    node.ckan = node.auth.ckan;
-    node.token = node.auth.token;
-
-    if (!node.ckan){
-      node.error("No CKAN endpoint specified");
-      return;
-    }
-
-    if (!node.token) {
-      node.error("No CKAN token specified");
+    if (!validateNode(node)){
       return;
     }
 
@@ -76,26 +84,7 @@ module.exports = function(RED) {
     node.resourceId = n.resourceId;
     node.auth = RED.nodes.getNode(n.auth);
 
-    if (!node.resourceId){
-      node.error("No resourceId specified");
-      return;
-    }
-
-    if (!node.auth) {
-      node.error("No credentials specified");
-      return;
-    }
-
-    node.ckan = node.auth.ckan;
-    node.token = node.auth.token;
-
-    if (!node.ckan){
-      node.error("No CKAN endpoint specified");
-      return;
-    }
-
-    if (!node.token) {
-      node.error("No CKAN token specified");
+    if (!validateNode(node)){
       return;
     }
 
@@ -118,24 +107,29 @@ module.exports = function(RED) {
 
     node.ckan = n.ckan;
 
-    if (!node.ckan){
-      node.error("No CKAN endpoint specified");
-      return;
-    }
-
-    if (n.credentials) {
-      node.token = n.credentials.token;
-    }
-
-    if (!node.token) {
-      node.error("No CKAN token specified");
-      return;
+    if (node.credentials) {
+      node.token = node.credentials.token;
     }
   }
 
   RED.nodes.registerType("ckants-credentials", CkantsCredentialsNode, {
     credentials: {
       token: {type:"text"}
+    }
+  });
+
+  RED.httpAdmin.post("/ckants/:id", RED.auth.needsPermission("ckants.query"), function(req,res) {
+    var node = RED.nodes.getNode(req.params.id);
+    if (node != null) {
+      try {
+          node.receive();
+          res.sendStatus(200);
+      } catch(err) {
+          res.sendStatus(500);
+          node.error(RED._("ckants.failed",{error:err.toString()}));
+      }
+    } else {
+        res.sendStatus(404);
     }
   });
 

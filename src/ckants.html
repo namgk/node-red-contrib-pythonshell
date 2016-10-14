@@ -17,7 +17,7 @@
 <script type="text/x-red" data-template-name="ckants out">
   <div class="form-tips"><p>This node sends data to CKAN Timeseries Datastore via datastore_ts_upsert API</p>
   <div class="form-row">
-    <label for="node-input-auth"><i class="fa fa-user"></i> CKAN Auth</label>
+    <label for="node-input-auth"><i class="fa"></i> CKAN Auth</label>
     <input type="text" id="node-input-auth">
   </div>
   <div class="form-row">
@@ -33,7 +33,7 @@
 <script type="text/x-red" data-template-name="ckants in">
   <div class="form-tips"><p>This node gets data from CKAN Timeseries Datastore</p>
   <div class="form-row">
-    <label for="node-input-auth"><i class="fa fa-user"></i> CKAN Auth</label>
+    <label for="node-input-auth"><i class="fa"></i> CKAN Auth</label>
     <input type="text" id="node-input-auth">
   </div>
   <div class="form-row">
@@ -56,11 +56,11 @@
 
 <script type="text/x-red" data-template-name="ckants-credentials">
   <div class="form-row">
-    <label for="node-config-input-ckan"><i class="fa fa-user"></i>CKAN</label>
+    <label for="node-config-input-ckan"><i class="fa"></i>CKAN</label>
     <input type="text" id="node-config-input-ckan" placeholder="http://hub.urbanopus.net">
   </div>
   <div class="form-row">
-    <label for="node-config-input-token"><i class="fa fa-user"></i>CKAN User Token</label>
+    <label for="node-config-input-token"><i class="fa"></i>CKAN User Token</label>
     <input type="text" id="node-config-input-token" placeholder="token from CKAN user profile">
   </div>
 </script>
@@ -104,6 +104,30 @@
     },
     labelStyle: function() {
         return this.name?"node_label_italic":"";
+    },
+    button: {
+      onclick: function() {
+        console.log('querying')
+        var node = this;
+        $.ajax({
+          url: "ckants/"+this.id,
+          type:"POST",
+          success: function(resp) {
+              RED.notify(node._("success"),"success");
+          },
+          error: function(jqXHR,textStatus,errorThrown) {
+              if (jqXHR.status == 404) {
+                  RED.notify(node._("common.notification.error",{message:node._("common.notification.errors.not-deployed")}),"error");
+              } else if (jqXHR.status == 500) {
+                  RED.notify(node._("common.notification.error",{message:node._("ckants.errors.failed")}),"error");
+              } else if (jqXHR.status == 0) {
+                  RED.notify(node._("common.notification.error",{message:node._("common.notification.errors.no-response")}),"error");
+              } else {
+                  RED.notify(node._("common.notification.error",{message:node._("common.notification.errors.unexpected",{status:jqXHR.status,message:textStatus})}),"error");
+              }
+            }
+        });
+      }
     }
   });
 
