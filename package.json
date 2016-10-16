@@ -1,32 +1,31 @@
 {
-  "name": "node-red-contrib-ckants",
-  "version": "1.0.2",
-  "description": "nodes used to interact with CKAN Timeseries extension",
-  "main": "index.js",
+  "name": "node-red-contrib-pythonshell",
+  "version": "0.0.2",
+  "description": "nodes used to interact with python processes",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/namgk/node-red-contrib-ckants.git"
+    "url": "git+https://github.com/namgk/node-red-contrib-pythonshell.git"
   },
   "keywords": [
     "distributed",
-    "ckan",
-    "timeseries",
-    "node"
+    "python",
+    "node",
+    "node-red"
   ],
   "author": "Nam Giang",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/namgk/node-red-contrib-ckants/issues"
+    "url": "https://github.com/namgk/node-red-contrib-pythonshell/issues"
   },
-  "homepage": "https://github.com/namgk/node-red-contrib-ckants#readme",
+  "homepage": "https://github.com/namgk/node-red-contrib-pythonshell#readme",
   "dependencies": {
   },
   "node-red": {
         "nodes"     : {
-            "ckants": "src/ckants.js"
+            "pythonshell": "src/pythonshell.js"
         }
     }
 }

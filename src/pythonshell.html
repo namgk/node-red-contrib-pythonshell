@@ -1,0 +1,83 @@
+<!--
+  Copyright 2014 Sense Tecnic Systems, Inc.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<script type="text/x-red" data-template-name="pythonshell in">
+  <div class="form-tips"><p>Provide a python file with full path</p>
+  
+  <div class="form-row">
+    <label for="node-input-pyfile"><i class="fa fa-tag"></i> pyfile </label>
+    <input type="text" id="node-input-pyfile" placeholder="pyfile">
+  </div>
+
+</script>
+
+<script type="text/x-red" data-help-name="pythonshell in">
+    <p>This node interact with a python process</p>
+</script>
+
+<style type="text/css">
+  .node_label_white {
+    fill: white;
+  }
+</style>
+
+<script type="text/javascript">
+
+  RED.nodes.registerType('pythonshell in',{
+    category: 'input',
+    defaults: {
+      pyfile: {required:true}
+    },
+    color:"#1c4e63",
+    inputs:0,
+    outputs:1,
+    icon: "bridge.png",
+    align: "left",
+    label: function() {
+        return "pythonshell in";
+    },
+    labelStyle: function() {
+      return "node_label_white";
+    },
+    button: {
+      onclick: function() {
+        console.log('querying')
+        var node = this;
+        $.ajax({
+          url: "pythonshell/"+this.id,
+          type:"POST",
+          success: function(resp) {
+            RED.notify(node._("success"),"success");
+          },
+          error: function(jqXHR,textStatus,errorThrown) {
+            if (jqXHR.status == 404) {
+                RED.notify(node._("common.notification.error",{message:node._("common.notification.errors.not-deployed")}),"error");
+            } else if (jqXHR.status == 500) {
+                RED.notify(node._("common.notification.error",{message:node._("pythonshell.errors.failed")}),"error");
+            } else if (jqXHR.status == 0) {
+                RED.notify(node._("common.notification.error",{message:node._("common.notification.errors.no-response")}),"error");
+            } else {
+                RED.notify(node._("common.notification.error",{message:node._("common.notification.errors.unexpected",{status:jqXHR.status,message:textStatus})}),"error");
+            }
+          }
+        });
+      }
+    }
+  });
+</script>
+
+
+
+
