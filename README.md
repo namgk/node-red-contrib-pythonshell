@@ -1,1 +1,1 @@
-The node has one parameter: the python file to be executed.
+Executing a python script from node-red. Currently accepting no inputs argument
