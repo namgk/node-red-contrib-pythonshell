@@ -17,19 +17,28 @@
   <div class="form-tips"><p>Provide a python file with full path</p>
   
   <div class="form-row">
-    <label for="node-input-pyfile"><i class="fa fa-tag"></i> pyfile </label>
-    <input type="text" id="node-input-pyfile" placeholder="pyfile">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name </label>
+    <input type="text" id="node-input-name">
+  </div>
+  <div class="form-row">
+    <label for="node-input-pyfile"><i class="fa fa-tag"></i> Py file </label>
+    <input type="text" id="node-input-pyfile" placeholder="/home/user/x.py">
   </div>
 
 </script>
 
 <script type="text/x-red" data-help-name="pythonshell in">
-    <p>This node interact with a python process</p>
+    <p>This node interacts with a python process, it run a python script and treats input payload as the arguments of the script. Script output will be forwarded to the node output</p>
 </script>
 
 <style type="text/css">
   .node_label_white {
     fill: white;
+  }
+
+  .node_label_white_italic {
+    fill: white;
+    font-style: italic;
   }
   #palette_node_pythonshell_in > div.palette_label {
     color: white;
@@ -41,6 +50,7 @@
   RED.nodes.registerType('pythonshell in',{
     category: 'input',
     defaults: {
+      name: {required:false},
       pyfile: {required:true}
     },
     color:"#1c4e63",
@@ -49,14 +59,13 @@
     icon: "bridge.png",
     align: "left",
     label: function() {
-        return "pythonshell in";
+        return this.name || "pythonshell in";
     },
     labelStyle: function() {
-      return "node_label_white";
+      return this.name ? "node_label_white_italic" : "node_label_white";
     },
     button: {
       onclick: function() {
-        console.log('querying')
         var node = this;
         $.ajax({
           url: "pythonshell/"+this.id,

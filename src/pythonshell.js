@@ -33,9 +33,14 @@ module.exports = function(RED) {
     var spawn = require('child_process').spawn;
   
     node.on("input",function(msg) {
-      console.log('firing!');
+      msg = msg.payload || '';
+      if (typeof msg === 'object'){
+        msg = JSON.stringify(msg);
+      } else {
+        msg = msg.toString();
+      }
 
-      var py = spawn('python', [node.pyfile]);
+      var py = spawn('python', [node.pyfile, msg]);
       var dataString = '';
       var errString = '';
 
@@ -51,7 +56,7 @@ module.exports = function(RED) {
         if (code){
           node.error('exit code: ' + code + ', ' + errString);
         } else{
-          node.send({payload: dataString});
+          node.send({payload: dataString.trim()});
         }
       });
     });
