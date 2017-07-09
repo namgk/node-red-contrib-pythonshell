@@ -16,54 +16,26 @@
 
 var util = require("util");
 var httpclient;
+var PythonshellNode = require('./PythonshellNode');
 
 module.exports = function(RED) {
   "use strict";
 
   function PythonshellInNode(n) {
     RED.nodes.createNode(this,n);
+
+    var pyNode = new PythonshellNode(n);
     var node = this;
-
-    node.pyfile = n.pyfile;
-
-    if (!node.pyfile){
-      throw 'pyfile not present'
-    }
-
-    var spawn = require('child_process').spawn;
   
     node.on("input",function(msg) {
-      msg = msg.payload || '';
-      if (typeof msg === 'object'){
-        msg = JSON.stringify(msg);
-      } else {
-        msg = msg.toString();
-      }
-
-      var py = spawn('python', [node.pyfile, msg]);
-      var dataString = '';
-      var errString = '';
-
-      py.stdout.on('data', function(data){
-        dataString += data.toString();
-      });
-
-      py.stderr.on('data', function(data){
-        errString += String(data);// just a different way to do it
-      });
-
-      py.on('close', function(code) {
-        if (code){
-          node.error('exit code: ' + code + ', ' + errString);
-        } else{
-          node.send({payload: dataString.trim()});
-        }
+      pyNode.onInput(msg, function(result){
+        node.send(result);
+      }, function(err){
+        node.error(err);
       });
     });
 
-    node.on('close', function() {
-      return
-    });
+    node.on('close', pyNode.onClose);
   }
 
   RED.nodes.registerType("pythonshell in", PythonshellInNode);
