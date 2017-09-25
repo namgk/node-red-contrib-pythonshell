@@ -16,7 +16,7 @@
 
 var util = require("util");
 var httpclient;
-var PythonshellNode = require('./PythonshellNode');
+var PythonshellNode = require('./PythonShellNode');
 
 module.exports = function(RED) {
   "use strict";
