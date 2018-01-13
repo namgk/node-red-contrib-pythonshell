@@ -8,14 +8,14 @@ function PythonshellInNode(config) {
 }
 
 PythonshellInNode.prototype.onInput = function(msg, out, err) {
-  msg = msg.payload || '';
-  if (typeof msg === 'object'){
-    msg = JSON.stringify(msg);
+  payload = msg.payload || '';
+  if (typeof payload === 'object'){
+    payload = JSON.stringify(payload);
   } else {
-    msg = msg.toString();
+    payload = payload.toString();
   }
 
-  var py = this.spawn('python', [this.pyfile, msg]);
+  var py = this.spawn('python', [this.pyfile, payload]);
   var dataString = '';
   var errString = '';
 
@@ -31,7 +31,8 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
     if (code){
       err('exit code: ' + code + ', ' + errString);
     } else{
-      out({payload: dataString.trim()});
+      msg.payload = dataString.trim();
+      out(msg);
     }
   }.bind(this));
 };
