@@ -31,7 +31,12 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
     if (code){
       err('exit code: ' + code + ', ' + errString);
     } else{
-      msg.payload = dataString.trim();
+        payload = dataString.trim()
+        try {
+            msg.payload = JSON.parse(payload);
+        } catch (e) {
+            msg.payload = payload;
+        }
       out(msg);
     }
   }.bind(this));
