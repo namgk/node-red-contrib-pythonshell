@@ -1,9 +1,21 @@
+var fs = require("fs");
+
 function PythonshellInNode(config) {
   if (!config.pyfile){
     throw 'pyfile not present';
   }
 
   this.pyfile = config.pyfile;
+  this.virtualenv = config.virtualenv;
+
+  if (!fs.existsSync(this.pyfile)) {
+    throw 'pyfile not exist';
+  }
+
+  if (this.virtualenv && !fs.existsSync(this.virtualenv)){
+    throw 'configured virtualenv not exist, consider remove or change';
+  }
+
   this.spawn = require('child_process').spawn;
 }
 
@@ -15,7 +27,9 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
     msg = msg.toString();
   }
 
-  var py = this.spawn('python', [this.pyfile, msg]);
+  var spawnCmd = (this.virtualenv ? this.virtualenv + '/bin/' : '') + 'python'
+
+  var py = this.spawn(spawnCmd, [this.pyfile, msg]);
   var dataString = '';
   var errString = '';
 

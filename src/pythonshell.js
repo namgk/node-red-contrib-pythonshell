@@ -24,8 +24,7 @@ module.exports = function(RED) {
   function PythonshellInNode(n) {
     RED.nodes.createNode(this,n);
 
-    var pyNode = new PythonshellNode(
-      );
+    var pyNode = new PythonshellNode(n);
     var node = this;
   
     node.on("input",function(msg) {

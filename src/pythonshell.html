@@ -24,11 +24,19 @@
     <label for="node-input-pyfile"><i class="fa fa-tag"></i> Py file </label>
     <input type="text" id="node-input-pyfile" placeholder="/home/user/x.py">
   </div>
+  <div class="form-row">
+    <label for="node-input-virtualenv"><i class="fa fa-tag"></i> Virtual Environment Path </label>
+    <input type="text" id="node-input-virtualenv" placeholder="/home/user/venv">
+  </div>
 
 </script>
 
 <script type="text/x-red" data-help-name="pythonshell in">
     <p>This node interacts with a python process, it run a python script and treats input payload as the arguments of the script. Script output will be forwarded to the node output</p>
+
+    <p>
+      Virtual environment can be used, please specify the path to it.
+    </p>
 </script>
 
 <style type="text/css">
@@ -50,8 +58,9 @@
   RED.nodes.registerType('pythonshell in',{
     category: 'input',
     defaults: {
-      name: {required:false},
-      pyfile: {required:true}
+      name: {required: false},
+      pyfile: {required: true},
+      virtualenv: {required: false}
     },
     color:"#1c4e63",
     inputs:1,
