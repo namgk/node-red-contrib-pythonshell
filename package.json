@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-pythonshell",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "nodes used to interact with python processes",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha"
