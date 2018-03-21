@@ -111,9 +111,31 @@ describe('Pythonshell Node', function() {
 			});
 
 			pyNode.onInput({payload: ""}, function(result){
+				if (result.onGoing){
+					return;
+				}
 			  assert.notEqual(result.payload, null);
 			  assert.equal(result.payload, 'hi');
 			  done()
+			}, function(err){
+			  done(err)
+			});
+    });
+
+    it('should output script ongoing result', function(done) {
+    	this.timeout(3000);
+
+			var pyNode = new PythonshellNode({
+				pyfile: __dirname + "/sample-loop.py"
+			});
+
+			pyNode.onInput({payload: ""}, function(result){
+				if (result.onGoing){
+					return;
+				}
+				assert.notEqual(result.payload, null);
+			  assert.notEqual(result.payload.indexOf('loop ended'), -1);
+			  done();
 			}, function(err){
 			  done(err)
 			});
@@ -125,6 +147,9 @@ describe('Pythonshell Node', function() {
 			});
 
 			pyNode.onInput({payload: "firstArg secondArg"}, function(result){
+				if (result.onGoing){
+					return;
+				}
 			  assert.notEqual(result.payload, null);
 			  assert.equal(result.payload, 'firstArg secondArg');
 			  done()
@@ -139,8 +164,10 @@ describe('Pythonshell Node', function() {
 			});
 
 			pyNode.onInput({payload: ""}, function(result){
+				if (result.onGoing){
+					return;
+				}
 			  assert.notEqual(result.payload, null);
-			  console.log(result.payload)
 			  assert.equal(result.payload, fs.readFileSync(__dirname + '/test.txt', 'utf8'));
 			  done()
 			}, function(err){
@@ -155,6 +182,9 @@ describe('Pythonshell Node', function() {
 			});
 
 			pyNode.onInput({payload: ""}, function(result){
+				if (result.onGoing){
+					return;
+				}
 			  assert.notEqual(result.payload, null);
 			  assert.equal(result.payload, 'hi from venv');
 			  done()
@@ -170,6 +200,9 @@ describe('Pythonshell Node', function() {
 			});
 
 			pyNode.onInput({payload: ""}, function(result){
+				if (result.onGoing){
+					return;
+				}
 			  assert.notEqual(result.payload, null);
 			  assert.equal(result.payload, fs.readFileSync(__dirname + '/test.txt', 'utf8'));
 			  done()

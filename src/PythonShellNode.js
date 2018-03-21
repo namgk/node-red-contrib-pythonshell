@@ -18,7 +18,6 @@ function PythonshellInNode(config) {
 
   this.pydir = this.pyfile.substring(0, this.pyfile.lastIndexOf('/'))
   this.pyfile = this.pyfile.substring(this.pyfile.lastIndexOf('/') + 1, this.pyfile.length)
-
   this.spawn = require('child_process').spawn;
 }
 
@@ -32,15 +31,19 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
 
   var spawnCmd = (this.virtualenv ? this.virtualenv + '/bin/' : '') + 'python'
 
-  var py = this.spawn(spawnCmd, [this.pyfile, msg], {
+  this.py = this.spawn(spawnCmd, [this.pyfile, msg], {
     cwd: this.pydir
   });
+
+  var py = this.py;
   var dataString = '';
   var errString = '';
 
   py.stdout.on('data', function(data){
-    dataString += data.toString();
-  });
+    let dataStr = data.toString().trim();
+    dataString += dataStr;
+    out({onGoing: dataStr});
+  }.bind(this));
 
   py.stderr.on('data', function(data){
     errString += String(data);// just a different way to do it
@@ -56,6 +59,10 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
 };
 
 PythonshellInNode.prototype.onClose = function() {
+  if (this.py){
+    this.py.stdin.pause();
+    this.py.kill();
+  }
   console.log('resource freed')
 };
 
