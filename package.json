@@ -3,7 +3,7 @@
   "version": "1.1.2",
   "description": "nodes used to interact with python processes",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/mocha/bin/mocha"
   },
   "repository": {
     "type": "git",
@@ -21,11 +21,13 @@
     "url": "https://github.com/namgk/node-red-contrib-pythonshell/issues"
   },
   "homepage": "https://github.com/namgk/node-red-contrib-pythonshell#readme",
-  "dependencies": {
-  },
+  "dependencies": {},
   "node-red": {
-        "nodes"     : {
-            "pythonshell": "src/pythonshell.js"
-        }
+    "nodes": {
+      "pythonshell": "src/pythonshell.js"
     }
+  },
+  "devDependencies": {
+    "mocha": "^5.0.4"
+  }
 }
