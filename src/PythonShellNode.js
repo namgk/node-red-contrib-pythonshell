@@ -16,6 +16,9 @@ function PythonshellInNode(config) {
     throw 'configured virtualenv not exist, consider remove or change';
   }
 
+  this.pydir = this.pyfile.substring(0, this.pyfile.lastIndexOf('/'))
+  this.pyfile = this.pyfile.substring(this.pyfile.lastIndexOf('/') + 1, this.pyfile.length)
+
   this.spawn = require('child_process').spawn;
 }
 
@@ -29,7 +32,9 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
 
   var spawnCmd = (this.virtualenv ? this.virtualenv + '/bin/' : '') + 'python'
 
-  var py = this.spawn(spawnCmd, [this.pyfile, msg]);
+  var py = this.spawn(spawnCmd, [this.pyfile, msg], {
+    cwd: this.pydir
+  });
   var dataString = '';
   var errString = '';
 
