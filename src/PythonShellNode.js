@@ -16,8 +16,9 @@ function PythonshellInNode(config) {
     throw 'configured virtualenv not exist, consider remove or change';
   }
 
-  this.pydir = this.pyfile.substring(0, this.pyfile.lastIndexOf('/'))
-  this.pyfile = this.pyfile.substring(this.pyfile.lastIndexOf('/') + 1, this.pyfile.length)
+  this.continuous = config.continuous;
+  this.pydir = this.pyfile.substring(0, this.pyfile.lastIndexOf('/'));
+  this.pyfile = this.pyfile.substring(this.pyfile.lastIndexOf('/') + 1, this.pyfile.length);
   this.spawn = require('child_process').spawn;
 }
 
@@ -41,8 +42,13 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
 
   py.stdout.on('data', function(data){
     let dataStr = data.toString().trim();
-    dataString += dataStr;
-    out({onGoing: dataStr});
+
+    if (this.continuous){
+      dataString = dataStr;
+      out({payload: dataString});
+    } else {
+      dataString += dataStr;
+    }
   }.bind(this));
 
   py.stderr.on('data', function(data){
@@ -53,17 +59,18 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
     if (code){
       err('exit code: ' + code + ', ' + errString);
     } else{
-      out({payload: dataString.trim()});
+      if (!this.continuous){
+        out({payload: dataString.trim()});
+      }
     }
   }.bind(this));
 };
 
 PythonshellInNode.prototype.onClose = function() {
   if (this.py){
-    this.py.stdin.pause();
     this.py.kill();
+    console.log('terminated')
   }
-  console.log('resource freed')
 };
 
 

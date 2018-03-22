@@ -111,9 +111,6 @@ describe('Pythonshell Node', function() {
 			});
 
 			pyNode.onInput({payload: ""}, function(result){
-				if (result.onGoing){
-					return;
-				}
 			  assert.notEqual(result.payload, null);
 			  assert.equal(result.payload, 'hi');
 			  done()
@@ -123,19 +120,24 @@ describe('Pythonshell Node', function() {
     });
 
     it('should output script ongoing result', function(done) {
-    	this.timeout(3000);
+    	this.timeout(10000);
+
+    	var runs = 0;
 
 			var pyNode = new PythonshellNode({
-				pyfile: __dirname + "/sample-loop.py"
+				pyfile: __dirname + "/sample-loop.py",
+				continuous: true
 			});
 
 			pyNode.onInput({payload: ""}, function(result){
-				if (result.onGoing){
-					return;
-				}
 				assert.notEqual(result.payload, null);
-			  assert.notEqual(result.payload.indexOf('loop ended'), -1);
-			  done();
+				assert.equal(result.payload, 'on going')
+				runs++;
+
+				if (runs >= 3){
+					pyNode.onClose()
+			  	done();
+				}
 			}, function(err){
 			  done(err)
 			});
@@ -147,9 +149,6 @@ describe('Pythonshell Node', function() {
 			});
 
 			pyNode.onInput({payload: "firstArg secondArg"}, function(result){
-				if (result.onGoing){
-					return;
-				}
 			  assert.notEqual(result.payload, null);
 			  assert.equal(result.payload, 'firstArg secondArg');
 			  done()
@@ -164,9 +163,6 @@ describe('Pythonshell Node', function() {
 			});
 
 			pyNode.onInput({payload: ""}, function(result){
-				if (result.onGoing){
-					return;
-				}
 			  assert.notEqual(result.payload, null);
 			  assert.equal(result.payload, fs.readFileSync(__dirname + '/test.txt', 'utf8'));
 			  done()
@@ -182,9 +178,6 @@ describe('Pythonshell Node', function() {
 			});
 
 			pyNode.onInput({payload: ""}, function(result){
-				if (result.onGoing){
-					return;
-				}
 			  assert.notEqual(result.payload, null);
 			  assert.equal(result.payload, 'hi from venv');
 			  done()
@@ -200,9 +193,6 @@ describe('Pythonshell Node', function() {
 			});
 
 			pyNode.onInput({payload: ""}, function(result){
-				if (result.onGoing){
-					return;
-				}
 			  assert.notEqual(result.payload, null);
 			  assert.equal(result.payload, fs.readFileSync(__dirname + '/test.txt', 'utf8'));
 			  done()

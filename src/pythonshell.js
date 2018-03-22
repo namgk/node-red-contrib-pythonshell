@@ -35,7 +35,7 @@ module.exports = function(RED) {
       });
     });
 
-    node.on('close', pyNode.onClose);
+    node.on('close', ()=>pyNode.onClose());
   }
 
   RED.nodes.registerType("pythonshell in", PythonshellInNode);
