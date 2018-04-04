@@ -32,7 +32,7 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
 
   var spawnCmd = (this.virtualenv ? this.virtualenv + '/bin/' : '') + 'python'
 
-  this.py = this.spawn(spawnCmd, [this.pyfile, msg], {
+  this.py = this.spawn(spawnCmd, ['-u', this.pyfile, msg], {
     cwd: this.pydir
   });
 
