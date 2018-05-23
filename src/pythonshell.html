@@ -1,4 +1,4 @@
-<!--
+f<!--
   Copyright 2014 Sense Tecnic Systems, Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,6 +31,10 @@
   <div class="form-row">
     <label>Continuous Output?</label>
     <input type="checkbox" id="node-input-continuous" style="display: inline-block; width: auto; vertical-align: top;">
+  </div>
+  <div class="form-row">
+    <label>Stdin Input? (data will be fed to the stdin of the scripts)</label>
+    <input type="checkbox" id="node-input-stdInData" style="display: inline-block; width: auto; vertical-align: top;">
   </div>
 
 </script>
@@ -65,7 +69,8 @@
       name: {required: false},
       pyfile: {required: true},
       virtualenv: {required: false},
-      continuous: {required: false}
+      continuous: {required: false},
+      stdInData: {required: false}
     },
     color:"#1c4e63",
     inputs:1,

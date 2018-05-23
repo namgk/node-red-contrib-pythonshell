@@ -1,10 +1,12 @@
-var fs = require('fs')
-var assert = require('assert');
+let fs = require('fs')
+let assert = require('assert');
+let spawn = require('child_process').spawn
+let net = require("net");
 
-var PythonshellNode = require('../src/PythonShellNode');
+let PythonshellNode = require('../src/PythonShellNode');
 
 describe('Pythonshell Node', function() {
-	var venv = "/venv";
+	let venv = "/venv";
 
 	before(function(done){
 		this.timeout(10000);
@@ -16,8 +18,8 @@ describe('Pythonshell Node', function() {
 
 	  console.log('creating virtual environment for testing')
 
-		var spawn = require('child_process').spawn;
-		var ve;
+		let spawn = require('child_process').spawn;
+		let ve;
 		try {
 			ve = spawn('virtualenv', [__dirname + venv]);
 		} catch (e){
@@ -32,7 +34,7 @@ describe('Pythonshell Node', function() {
 	      done(code);
 	    } else{
 	      try {
-					var pipInstall = spawn(__dirname + venv + '/bin/pip', ['install', 'lxml']);
+					let pipInstall = spawn(__dirname + venv + '/bin/pip', ['install', 'lxml']);
 					pipInstall.stdout.on('data', d=>console.log(d.toString()));
 					pipInstall.stderr.on('data', d=>console.log(d.toString()));
 					pipInstall.on('close', done)
@@ -46,7 +48,7 @@ describe('Pythonshell Node', function() {
 	describe('Failing cases', function(){
     it('should throw an error for empty config', function(done) {
     	try {
-				var pyNode = new PythonshellNode();
+				let pyNode = new PythonshellNode();
 				done(1)
     	} catch (e){
     		done()
@@ -55,7 +57,7 @@ describe('Pythonshell Node', function() {
 
     it('should throw an error for empty config', function(done) {
     	try {
-				var pyNode = new PythonshellNode({});
+				let pyNode = new PythonshellNode({});
 				done(1)
     	} catch (e){
     		done()
@@ -64,7 +66,7 @@ describe('Pythonshell Node', function() {
 
     it('should throw an error for config without python file', function(done) {
     	try {
-				var pyNode = new PythonshellNode({virtualenv: __dirname + venv});
+				let pyNode = new PythonshellNode({virtualenv: __dirname + venv});
 				done(1)
     	} catch (e){
     		done()
@@ -73,7 +75,7 @@ describe('Pythonshell Node', function() {
 
     it('should throw an error for non existing python file', function(done) {
     	try {
-				var pyNode = new PythonshellNode({pyfile: __dirname + "/sample.p"});
+				let pyNode = new PythonshellNode({pyfile: __dirname + "/sample.p"});
 				done(1)
     	} catch (e){
     		done()
@@ -82,7 +84,7 @@ describe('Pythonshell Node', function() {
 
     it('should throw an error for non existing python virtualenv', function(done) {
     	try {
-				var pyNode = new PythonshellNode({
+				let pyNode = new PythonshellNode({
 					pyfile: __dirname + "/sample.py",
 					virtualenv: __dirname + "/awefaewaf"
 				});
@@ -93,7 +95,7 @@ describe('Pythonshell Node', function() {
     });
 
     it('should throw an error when importing external libraries without venv', function(done) {
-			var pyNode = new PythonshellNode({pyfile: __dirname + "/sample-need-venv.py"});
+			let pyNode = new PythonshellNode({pyfile: __dirname + "/sample-need-venv.py"});
 
 			pyNode.onInput({payload: ""}, function(result){
 			  done(1)
@@ -106,7 +108,7 @@ describe('Pythonshell Node', function() {
 
   describe('Run Python script', function() {
     it('should return the script result', function(done) {
-			var pyNode = new PythonshellNode({
+			let pyNode = new PythonshellNode({
 				pyfile: __dirname + "/sample.py"
 			});
 
@@ -122,9 +124,9 @@ describe('Pythonshell Node', function() {
     it('should output script ongoing result', function(done) {
     	this.timeout(10000);
 
-    	var runs = 0;
+    	let runs = 0;
 
-			var pyNode = new PythonshellNode({
+			let pyNode = new PythonshellNode({
 				pyfile: __dirname + "/sample-loop.py",
 				continuous: true
 			});
@@ -144,7 +146,7 @@ describe('Pythonshell Node', function() {
     });
 
     it('should pass arguments to script', function(done) {
-			var pyNode = new PythonshellNode({
+			let pyNode = new PythonshellNode({
 				pyfile: __dirname + "/sample-with-arg.py"
 			});
 
@@ -158,7 +160,7 @@ describe('Pythonshell Node', function() {
     });
 
     it('should support file read', function(done) {
-			var pyNode = new PythonshellNode({
+			let pyNode = new PythonshellNode({
 				pyfile: __dirname + "/sample-file-read.py"
 			});
 
@@ -172,7 +174,7 @@ describe('Pythonshell Node', function() {
     });
 
     it('should support virtual env', function(done) {
-			var pyNode = new PythonshellNode({
+			let pyNode = new PythonshellNode({
 				pyfile: __dirname + "/sample-need-venv.py",
 				virtualenv: __dirname + venv
 			});
@@ -187,7 +189,7 @@ describe('Pythonshell Node', function() {
     });
 
     it('should support virtual env and file read', function(done) {
-			var pyNode = new PythonshellNode({
+			let pyNode = new PythonshellNode({
 				pyfile: __dirname + "/sample-need-venv-file-read.py",
 				virtualenv: __dirname + venv
 			});
@@ -201,4 +203,68 @@ describe('Pythonshell Node', function() {
 			});
     });
   });
+
+	describe('piping using unix socket', () => {
+
+		it.skip('pipe', function(done) {
+			let client
+			let spawnCmd = 'python'//__dirname + '/' + venv + '/bin/' + 'python'
+			let py1File = __dirname + "/sample-loop.py"
+			let py2File = __dirname + "/stdin-data.py"
+
+			let py1 = spawn(spawnCmd, ['-u', py1File])
+			let py2 = spawn(spawnCmd, ['-u', py2File])
+
+			py2.stdout.pipe(process.stdout)
+
+			py1.stdout.on('data', d => {
+				if (client)
+					client.write(d)
+			})
+
+			let pipeServer = net.createServer(stream => {
+	      stream.on('data', d => {
+          py2.stdin.write(d)
+	      })
+	    })
+	    pipeServer.listen('./abc')
+
+			client = net.connect('./abc', console.log)
+		})
+
+		it.skip('work stdin-data', function(done) {
+			this.timeout(10000);
+
+		  let spawnCmd = __dirname + '/' + venv + '/bin/' + 'python'
+			let stdinDataFile = __dirname + "/stdin-data.py"
+
+			let child = spawn(spawnCmd, ['-u', stdinDataFile])
+
+			setInterval(()=>{
+				child.stdin.write("abc\n")
+			},1000)
+
+			child.stdout.pipe(process.stdout);
+    });
+
+		it('send data to python script stdin', function(done) {
+			// this.timeout(10000);
+
+			let pyNode = new PythonshellNode({
+				pyfile: __dirname + "/stdin-data.py",
+				stdInData: true
+			});
+
+			pyNode.onInput({payload: "abc\n"}, function(result){
+			  assert.equal(result.payload, "abc");
+			  done()
+			}, function(err){
+			  done(err)
+			});
+
+			setTimeout(()=>{
+				pyNode.onClose()
+			}, 1000)
+    });
+	})
 });

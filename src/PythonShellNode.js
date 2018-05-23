@@ -16,7 +16,8 @@ function PythonshellInNode(config) {
     throw 'configured virtualenv not exist, consider remove or change';
   }
 
-  this.continuous = config.continuous;
+  this.continuous = config.stdInData ? true : config.continuous;
+  this.stdInData = config.stdInData;
   this.pydir = this.pyfile.substring(0, this.pyfile.lastIndexOf('/'));
   this.pyfile = this.pyfile.substring(this.pyfile.lastIndexOf('/') + 1, this.pyfile.length);
   this.spawn = require('child_process').spawn;
@@ -32,15 +33,33 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
 
   var spawnCmd = (this.virtualenv ? this.virtualenv + '/bin/' : '') + 'python'
 
-  this.py = this.spawn(spawnCmd, ['-u', this.pyfile, msg], {
-    cwd: this.pydir
-  });
+  if (this.stdInData){
+    if (!this.py){
+      this.py = this.spawn(spawnCmd, ['-u', this.pyfile], {
+        cwd: this.pydir
+      });
+      this.firstExecution = true
+    } else {
+      this.firstExecution = false
+    }
+  } else {
+    this.py = this.spawn(spawnCmd, ['-u', this.pyfile, msg], {
+      cwd: this.pydir
+    });
+  }
+
+  // subsequence message, no need to setup callbacks
+  if (this.stdInData && !this.firstExecution){
+    console.log('writing ' + msg)
+    this.py.stdin.write(msg)
+    return
+  }
 
   var py = this.py;
   var dataString = '';
   var errString = '';
 
-  py.stdout.on('data', function(data){
+  py.stdout.on('data', data => {
     let dataStr = data.toString().trim();
 
     if (this.continuous){
@@ -49,13 +68,13 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
     } else {
       dataString += dataStr;
     }
-  }.bind(this));
+  });
 
-  py.stderr.on('data', function(data){
+  py.stderr.on('data', data => {
     errString += String(data);// just a different way to do it
   });
 
-  py.on('close', function(code) {
+  py.on('close', code =>{
     if (code){
       err('exit code: ' + code + ', ' + errString);
     } else{
@@ -63,7 +82,12 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
         out({payload: dataString.trim()});
       }
     }
-  }.bind(this));
+  });
+
+  if (this.stdInData){
+    console.log('writing first time ' + msg)
+    py.stdin.write(msg)
+  }
 };
 
 PythonshellInNode.prototype.onClose = function() {
