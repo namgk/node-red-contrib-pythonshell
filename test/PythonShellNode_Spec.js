@@ -275,7 +275,7 @@ describe('Pythonshell Node', function() {
     });
 
 		it('send data to python script stdin', function(done) {
-			// this.timeout(10000);
+			// TODO: here test just one input
 
 			let pyNode = new PythonshellNode({
 				pyfile: __dirname + "/stdin-data.py",

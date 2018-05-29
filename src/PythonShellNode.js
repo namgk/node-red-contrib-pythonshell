@@ -32,12 +32,17 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
     msg = msg.toString();
   }
 
-  if (msg === 'pythonshell@close' && this.py != null){
-    this.onClose()
-    return
+  if (msg === 'pythonshell@close'){
+    if (this.py != null){
+      this.onClose()
+      return
+    } else {
+      // trigger new execution
+      msg = ''
+    }
   }
 
-  if (this.continuous && this.py != null){
+  if (this.continuous && !this.stdInData && this.py != null){
     this.onStatus({fill:"yellow",shape:"dot",text:"Not accepting input"})
     return
   }
@@ -57,10 +62,6 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
     this.py = this.spawn(spawnCmd, ['-u', this.pyfile, msg], {
       cwd: this.pydir
     });
-  }
-
-  if (msg === 'pythonshell@close'){
-    return
   }
 
   // subsequence message, no need to setup callbacks
