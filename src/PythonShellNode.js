@@ -61,7 +61,9 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
 
   // subsequence message, no need to setup callbacks
   if (this.stdInData && !this.firstExecution){
-    this.py.stdin.write(msg + '\n')
+    if (msg !== 'pythonshell@close'){
+      this.py.stdin.write(msg + '\n')
+    }
     return
   }
 
