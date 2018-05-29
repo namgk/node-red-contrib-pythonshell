@@ -64,6 +64,8 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
     });
   }
 
+  this.onStatus({fill:"green",shape:"dot",text:"Running"})
+
   // subsequence message, no need to setup callbacks
   if (this.stdInData && !this.firstExecution){
     this.py.stdin.write(msg + '\n')
@@ -83,7 +85,7 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
     } else {
       dataString += dataStr;
     }
-    this.onStatus({fill:"green",shape:"dot",text:"Running"})
+    this.onStatus({fill:"green",shape:"dot",text:"Producing result"})
   });
 
   py.stderr.on('data', data => {
