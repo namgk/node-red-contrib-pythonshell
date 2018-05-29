@@ -27,7 +27,7 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
   msg = msg.payload || '';
   if (typeof msg === 'object'){
     msg = JSON.stringify(msg);
-  } else {
+  } else if (typeof msg !== 'string'){
     msg = msg.toString();
   }
 
@@ -51,7 +51,7 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
   // subsequence message, no need to setup callbacks
   if (this.stdInData && !this.firstExecution){
     console.log('writing ' + msg)
-    this.py.stdin.write(msg)
+    this.py.stdin.write(msg + '\n')
     return
   }
 
@@ -86,7 +86,7 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
 
   if (this.stdInData){
     console.log('writing first time ' + msg)
-    py.stdin.write(msg)
+    py.stdin.write(msg + '\n')
   }
 };
 
