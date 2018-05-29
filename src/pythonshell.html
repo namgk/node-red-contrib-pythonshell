@@ -112,7 +112,7 @@ f<!--
       });
     },
     oneditsave: function(){
-      if ($('#node-input-continuous').is(':checked')){
+      if ($('#node-input-continuous').is(':checked') && !$('#node-input-stdInData').is(':checked')){
         this.inputs = 0;
       }
     },
