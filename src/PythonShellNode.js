@@ -21,6 +21,7 @@ function PythonshellInNode(config) {
   this.pydir = this.pyfile.substring(0, this.pyfile.lastIndexOf('/'));
   this.pyfile = this.pyfile.substring(this.pyfile.lastIndexOf('/') + 1, this.pyfile.length);
   this.spawn = require('child_process').spawn;
+  this.onStatus = ()=>{}
 }
 
 PythonshellInNode.prototype.onInput = function(msg, out, err) {
@@ -29,6 +30,14 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
     msg = JSON.stringify(msg);
   } else if (typeof msg !== 'string'){
     msg = msg.toString();
+  }
+
+  if (msg === 'pythonshell@close' && this.py == null){
+    this.onStatus({fill:"yellow",shape:"dot",text:"Script Closed"})
+    setTimeout(()=>{
+      this.onStatus({})
+    }, 2000)
+    return
   }
 
   var spawnCmd = (this.virtualenv ? this.virtualenv + '/bin/' : '') + 'python'
@@ -50,8 +59,11 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
 
   // subsequence message, no need to setup callbacks
   if (this.stdInData && !this.firstExecution){
-    console.log('writing ' + msg)
-    this.py.stdin.write(msg + '\n')
+    if (msg === 'pythonshell@close'){
+      this.onClose()
+    } else {
+      this.py.stdin.write(msg + '\n')
+    }
     return
   }
 
@@ -72,29 +84,41 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
 
   py.stderr.on('data', data => {
     errString += String(data);// just a different way to do it
+    this.onStatus({fill:"red",shape:"dot",text:"Error: " + errString})
   });
 
   py.on('close', code =>{
     if (code){
       err('exit code: ' + code + ', ' + errString);
-    } else{
-      if (!this.continuous){
-        out({payload: dataString.trim()});
-      }
+      this.onStatus({fill:"red",shape:"dot",text:"Exited: " + code})
+    } else if (!this.continuous){
+      out({payload: dataString.trim()});
+      this.onStatus({fill:"green",shape:"dot",text:"Done"})
+    } else {
+      this.onStatus({fill:"yellow",shape:"dot",text:"Script Closed"})
     }
+    setTimeout(()=>{
+      this.onStatus({})
+    }, 2000)
   });
 
   if (this.stdInData){
-    console.log('writing first time ' + msg)
     py.stdin.write(msg + '\n')
   }
+
+  this.onStatus({fill:"green",shape:"dot",text:"Running"})
 };
 
 PythonshellInNode.prototype.onClose = function() {
   if (this.py){
-    this.py.kill();
-    console.log('terminated')
+    this.py.kill()
+    this.py = null
   }
+  this.onStatus({})
+};
+
+PythonshellInNode.prototype.setStatusCallback = function(callback) {
+  this.onStatus = callback
 };
 
 

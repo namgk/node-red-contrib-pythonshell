@@ -24,8 +24,12 @@ module.exports = function(RED) {
   function PythonshellInNode(n) {
     RED.nodes.createNode(this,n);
 
-    var pyNode = new PythonshellNode(n);
     var node = this;
+    node.config = n; // copy config to the backend so that down bellow we can have a reference
+
+    var pyNode = new PythonshellNode(n);
+
+    pyNode.setStatusCallback(node.status.bind(node))
   
     node.on("input",function(msg) {
       pyNode.onInput(msg, function(result){
@@ -44,8 +48,12 @@ module.exports = function(RED) {
     var node = RED.nodes.getNode(req.params.id);
     if (node != null) {
       try {
+        if (node.config.stdInData){// see above comment
+          node.receive({payload: 'pythonshell@close'})
+        } else {
           node.receive();
-          res.sendStatus(200);
+        }
+        res.sendStatus(200);
       } catch(err) {
           res.sendStatus(500);
           node.error(RED._("pythonshell.failed",{error:err.toString()}));
