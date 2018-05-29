@@ -16,8 +16,8 @@ function PythonshellInNode(config) {
     throw 'configured virtualenv not exist, consider remove or change';
   }
 
-  this.continuous = config.stdInData ? true : config.continuous;
   this.stdInData = config.stdInData;
+  this.continuous = this.stdInData ? true : config.continuous;
   this.pydir = this.pyfile.substring(0, this.pyfile.lastIndexOf('/'));
   this.pyfile = this.pyfile.substring(this.pyfile.lastIndexOf('/') + 1, this.pyfile.length);
   this.spawn = require('child_process').spawn;

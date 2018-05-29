@@ -73,7 +73,7 @@ f<!--
       stdInData: {required: false}
     },
     color:"#1c4e63",
-    inputs:1,
+    inputs: 1,
     outputs:1,
     icon: "bridge.png",
     align: "left",
@@ -82,6 +82,19 @@ f<!--
     },
     labelStyle: function() {
       return this.name ? "node_label_white_italic" : "node_label_white";
+    },
+    oneditprepare: function() {
+      $("#node-input-stdInData").change(function(e) {
+        if(e.target.checked) {
+          $('#node-input-continuous').prop('checked', true);
+        }
+      });
+      $("#node-input-continuous").change(function(e) {
+        if(!e.target.checked && $('#node-input-stdInData').is(':checked')) {
+          alert('stdInData has to be unchecked first')
+          $('#node-input-continuous').prop('checked', true);
+        }
+      });
     },
     button: {
       onclick: function() {

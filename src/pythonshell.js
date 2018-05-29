@@ -48,7 +48,7 @@ module.exports = function(RED) {
     var node = RED.nodes.getNode(req.params.id);
     if (node != null) {
       try {
-        if (node.config.stdInData){// see above comment
+        if (node.config.continuous){// see above comment
           node.receive({payload: 'pythonshell@close'})
         } else {
           node.receive();
