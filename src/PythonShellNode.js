@@ -32,11 +32,13 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
     msg = msg.toString();
   }
 
-  if (msg === 'pythonshell@close' && this.py == null){
-    this.onStatus({fill:"yellow",shape:"dot",text:"Script Closed"})
-    setTimeout(()=>{
-      this.onStatus({})
-    }, 2000)
+  if (msg === 'pythonshell@close' && this.py != null){
+    this.onClose()
+    return
+  }
+
+  if (this.continuous && this.py != null){
+    this.onStatus({fill:"yellow",shape:"dot",text:"Not accepting input"})
     return
   }
 
@@ -59,11 +61,7 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
 
   // subsequence message, no need to setup callbacks
   if (this.stdInData && !this.firstExecution){
-    if (msg === 'pythonshell@close'){
-      this.onClose()
-    } else {
-      this.py.stdin.write(msg + '\n')
-    }
+    this.py.stdin.write(msg + '\n')
     return
   }
 
@@ -80,6 +78,7 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
     } else {
       dataString += dataStr;
     }
+    this.onStatus({fill:"green",shape:"dot",text:"Running"})
   });
 
   py.stderr.on('data', data => {
@@ -97,6 +96,7 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
     } else {
       this.onStatus({fill:"yellow",shape:"dot",text:"Script Closed"})
     }
+    this.py = null
     setTimeout(()=>{
       this.onStatus({})
     }, 2000)
@@ -105,8 +105,6 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
   if (this.stdInData){
     py.stdin.write(msg + '\n')
   }
-
-  this.onStatus({fill:"green",shape:"dot",text:"Running"})
 };
 
 PythonshellInNode.prototype.onClose = function() {
@@ -114,7 +112,6 @@ PythonshellInNode.prototype.onClose = function() {
     this.py.kill()
     this.py = null
   }
-  this.onStatus({})
 };
 
 PythonshellInNode.prototype.setStatusCallback = function(callback) {

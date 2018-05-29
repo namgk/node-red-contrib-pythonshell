@@ -29,12 +29,21 @@ f<!--
     <input type="text" id="node-input-virtualenv" placeholder="/home/user/venv">
   </div>
   <div class="form-row">
-    <label>Continuous Output?</label>
+    <label>Continuous?</label>
     <input type="checkbox" id="node-input-continuous" style="display: inline-block; width: auto; vertical-align: top;">
   </div>
   <div class="form-row">
-    <label>Stdin Input? (data will be fed to the stdin of the scripts)</label>
+    <label>Stdin Input?</label>
     <input type="checkbox" id="node-input-stdInData" style="display: inline-block; width: auto; vertical-align: top;">
+  </div>
+
+  <div class="form-tips">
+    <p>
+      <b>Continuous:</b> this means the script will continuously produce data (good for trigger once, run forever scripts). This option will always be checked if Stdin Input is checked.
+    </p>
+    <p>
+      <b>Stdin Input:</b> when this is checked, input to the node will be fed to the stdin of the scripts. That is, one the very first input, the script will be launched and wait for data from its stdin.
+    </p>
   </div>
 
 </script>
@@ -44,6 +53,13 @@ f<!--
 
     <p>
       Virtual environment can be used, please specify the path to it.
+    </p>
+
+    <p>
+      <b>
+        Note:
+      </b>
+      If <b>Continuous</b> mode is checked, clicking on the trigger of the node itself will terminate the script. Also, when the script is producing data, any new input will be ignored
     </p>
 </script>
 
@@ -91,10 +107,14 @@ f<!--
       });
       $("#node-input-continuous").change(function(e) {
         if(!e.target.checked && $('#node-input-stdInData').is(':checked')) {
-          alert('stdInData has to be unchecked first')
           $('#node-input-continuous').prop('checked', true);
         }
       });
+    },
+    oneditsave: function(){
+      if ($('#node-input-continuous').is(':checked')){
+        this.inputs = 0;
+      }
     },
     button: {
       onclick: function() {

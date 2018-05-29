@@ -145,6 +145,33 @@ describe('Pythonshell Node', function() {
 			});
     });
 
+    it('should not accepting input when is producing result', function(done) {
+    	this.timeout(10000);
+
+    	let ins = 0;
+    	let runner;
+
+			let pyNode = new PythonshellNode({
+				pyfile: __dirname + "/sample-loop.py",
+				continuous: true
+			});
+
+			pyNode.setStatusCallback(status=>{
+				if (ins === 2 && status.text === "Not accepting input"){
+					clearInterval(runner)
+					pyNode.onClose()
+			  	done()
+				}
+			})
+
+			runner = setInterval(()=>{
+				ins++
+				pyNode.onInput({payload: "arg"},(result)=>{}, (err)=>{done(err)})
+			}, 500)
+
+			// TODO: to double check, look at ps aux | grep python 
+    });
+
     it('should pass arguments to script', function(done) {
 			let pyNode = new PythonshellNode({
 				pyfile: __dirname + "/sample-with-arg.py"
