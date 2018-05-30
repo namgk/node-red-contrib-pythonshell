@@ -52,7 +52,8 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
   if (this.stdInData){
     if (!this.py){
       this.py = this.spawn(spawnCmd, ['-u', this.pyfile], {
-        cwd: this.pydir
+        cwd: this.pydir,
+        detached: true
       });
       this.firstExecution = true
     } else {
