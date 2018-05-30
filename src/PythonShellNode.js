@@ -64,7 +64,7 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
     });
   }
 
-  this.onStatus({fill:"green",shape:"dot",text:"Running"})
+  this.onStatus({fill:"green",shape:"dot",text:"Standby"})
 
   // subsequence message, no need to setup callbacks
   if (this.stdInData && !this.firstExecution){
@@ -83,7 +83,7 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
 
     let dataStr = data.toString();
 
-    console.log("last char: " + dataStr.slice(-1);)
+    console.log("last char: " + dataStr.slice(-1))
 
     dataString += dataStr;
 
