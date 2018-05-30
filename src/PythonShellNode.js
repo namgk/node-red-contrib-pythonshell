@@ -77,20 +77,33 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
   var errString = '';
 
   py.stdout.on('data', data => {
-    console.log((typeof data) + data.length)
-    let dataStr = data.toString().trim();
-    console.log(dataStr.length)
+    clearTimeout(this.standbyTimer)
 
-    if (this.continuous){
-      dataString = dataStr;
-      out({payload: dataString});
-    } else {
-      dataString += dataStr;
+    this.onStatus({fill:"green",shape:"dot",text:"Processing data"})
+
+    let dataStr = data.toString();
+
+    console.log("last char: " + dataStr.slice(-1);)
+
+    dataString += dataStr;
+
+    if (dataString.endsWith("\n")){
+      console.log(dataString.length)
+
+      if (this.continuous){
+        dataString = dataStr;
+        out({payload: dataString});
+      } else {
+        dataString += dataStr;
+      }
+
+      dataString = ''
     }
-    this.onStatus({fill:"green",shape:"dot",text:"Producing result"})
-    setTimeout(()=>{
-      this.onStatus({fill:"green",shape:"dot",text:"Running"})
+
+    this.standbyTimer = setTimeout(()=>{
+      this.onStatus({fill:"green",shape:"dot",text:"Standby"})
     }, 2000)
+
   });
 
   py.stderr.on('data', data => {
