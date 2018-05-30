@@ -77,7 +77,9 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
   var errString = '';
 
   py.stdout.on('data', data => {
+    console.log(data.length)
     let dataStr = data.toString().trim();
+    console.log(dataStr.length)
 
     if (this.continuous){
       dataString = dataStr;
@@ -86,6 +88,9 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
       dataString += dataStr;
     }
     this.onStatus({fill:"green",shape:"dot",text:"Producing result"})
+    setTimeout(()=>{
+      this.onStatus({fill:"green",shape:"dot",text:"Running"})
+    }, 2000)
   });
 
   py.stderr.on('data', data => {
