@@ -91,13 +91,9 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
       console.log(dataString.length)
 
       if (this.continuous){
-        dataString = dataStr;
         out({payload: dataString});
-      } else {
-        dataString += dataStr;
+        dataString = ''
       }
-
-      dataString = ''
     }
 
     this.standbyTimer = setTimeout(()=>{
