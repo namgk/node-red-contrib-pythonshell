@@ -52,7 +52,7 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
   if (this.stdInData){
     if (!this.py){
       this.py = this.spawn(spawnCmd, ['-u', this.pyfile], {
-        cwd: this.pydir
+        cwd: this.pydir, maxBuffer: 1024 * 1024 * 100
       });
       this.firstExecution = true
     } else {
@@ -60,7 +60,7 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
     }
   } else {
     this.py = this.spawn(spawnCmd, ['-u', this.pyfile, msg], {
-      cwd: this.pydir
+      cwd: this.pydir, maxBuffer: 1024 * 1024 * 100
     });
   }
 
