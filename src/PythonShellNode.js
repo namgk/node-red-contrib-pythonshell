@@ -104,6 +104,11 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
     this.onStatus({fill:"red",shape:"dot",text:"Error: " + errString})
   });
 
+  py.stderr.on('error', console.log)
+  py.stdout.on('error', console.log)
+  py.stdin.on('error', console.log)
+  py.on('error', console.log)
+
   py.on('close', code =>{
     if (code){
       err('exit code: ' + code + ', ' + errString);
