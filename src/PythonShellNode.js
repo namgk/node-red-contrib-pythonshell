@@ -84,13 +84,9 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
 
     let dataStr = data.toString();
 
-    console.log("last char: " + dataStr.slice(-1))
-
     dataString += dataStr;
 
     if (dataString.endsWith("\n")){
-      console.log(dataString.length)
-
       if (this.continuous){
         out({payload: dataString});
         dataString = ''

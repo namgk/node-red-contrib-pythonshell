@@ -133,7 +133,7 @@ describe('Pythonshell Node', function() {
 
 			pyNode.onInput({payload: ""}, function(result){
 				assert.notEqual(result.payload, null);
-				assert.equal(result.payload, 'on going')
+				assert.equal(result.payload.trim(), 'on going')
 				runs++;
 
 				if (runs >= 3){
@@ -283,7 +283,7 @@ describe('Pythonshell Node', function() {
 			});
 
 			pyNode.onInput({payload: "abc\n"}, function(result){
-			  assert.equal(result.payload, "abc");
+			  assert.equal(result.payload.trim(), "abc");
 			  done()
 			}, function(err){
 			  done(err)
