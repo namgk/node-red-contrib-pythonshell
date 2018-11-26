@@ -1,8 +1,8 @@
-Now supporting continuous std in data as the input to the script. If the node is configured to receive continuous data from its input, clicking on the trigger will terminate the script.
-
 Executing a python script from node-red. Input to the node will become the argument for the python script, output of the script will be sent to output of the node.
 
-Now supporting executing within a virtual environment. Specify the path to the virtualenv folder in node configuration.
+* Now supporting continuous std in data as the input to the script. If the node is configured to receive continuous data from its input, clicking on the trigger will terminate the script.
+
+* Now supporting executing within a virtual environment. Specify the path to the virtualenv folder in node configuration.
 
 Example flow:
 
