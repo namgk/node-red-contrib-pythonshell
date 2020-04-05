@@ -29,6 +29,10 @@ f<!--
     <input type="text" id="node-input-virtualenv" placeholder="/home/user/venv">
   </div>
   <div class="form-row">
+  <label>Use Python 3?</label>
+    <input type="checkbox" id="node-input-python3" style="display: inline-block; width: auto; vertical-align: top;">
+  </div>
+  <div class="form-row">
     <label>Continuous?</label>
     <input type="checkbox" id="node-input-continuous" style="display: inline-block; width: auto; vertical-align: top;">
   </div>
@@ -86,7 +90,8 @@ f<!--
       pyfile: {required: true},
       virtualenv: {required: false},
       continuous: {required: false},
-      stdInData: {required: false}
+      stdInData: {required: false},
+      python3: {required: false}
     },
     color:"#1c4e63",
     inputs: 1,
@@ -103,6 +108,11 @@ f<!--
       $("#node-input-stdInData").change(function(e) {
         if(e.target.checked) {
           $('#node-input-continuous').prop('checked', true);
+        }
+      });
+      $("#node-input-python3").change(function(e) {
+        if(e.target.checked) {
+          $('#node-input-python3').prop('checked', true);
         }
       });
       $("#node-input-continuous").change(function(e) {

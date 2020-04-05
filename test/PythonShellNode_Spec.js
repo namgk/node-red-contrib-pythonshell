@@ -215,6 +215,35 @@ describe('Pythonshell Node', function() {
 			});
     });
 
+    it('should support python3', function(done) {
+            let pyNode = new PythonshellNode({
+                pyfile: __dirname + "/sample-python3.py",
+                python3: true
+            });
+            pyNode.onInput({payload: ""}, function(result){
+              assert.notEqual(result.payload, null);
+              assert.equal(result.payload, '0 1 2 3 4 5 6 7 8 9');
+              done()
+            }, function(err){
+              done(err)
+            });
+    });
+
+    it('should support virtual env and file read', function(done) {
+            let pyNode = new PythonshellNode({
+                pyfile: __dirname + "/sample-python3.py",
+                virtualenv: __dirname + venv,
+                python3: true
+            });
+            pyNode.onInput({payload: ""}, function(result){
+              assert.notEqual(result.payload, null);
+              assert.equal(result.payload, '0 1 2 3 4 5 6 7 8 9');
+              done()
+            }, function(err){
+              done(err)
+            });
+    });
+
     it('should support virtual env and file read', function(done) {
 			let pyNode = new PythonshellNode({
 				pyfile: __dirname + "/sample-need-venv-file-read.py",
