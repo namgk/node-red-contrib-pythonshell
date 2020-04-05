@@ -4,7 +4,7 @@ function PythonshellInNode(config) {
   if (!config.pyfile){
     throw 'pyfile not present';
   }
-
+  this.pythonExec = config.python3 ? "python3" : "python";
   this.pyfile = config.pyfile;
   this.virtualenv = config.virtualenv;
 
@@ -47,7 +47,7 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
     return
   }
 
-  var spawnCmd = (this.virtualenv ? this.virtualenv + '/bin/' : '') + 'python'
+  var spawnCmd = (this.virtualenv ? this.virtualenv + '/bin/' : '') + this.pythonExec
 
   if (this.stdInData){
     if (!this.py){
