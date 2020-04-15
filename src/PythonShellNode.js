@@ -25,20 +25,20 @@ function PythonshellInNode(config) {
 }
 
 PythonshellInNode.prototype.onInput = function(msg, out, err) {
-  msg = msg.payload || '';
-  if (typeof msg === 'object'){
-    msg = JSON.stringify(msg);
-  } else if (typeof msg !== 'string'){
-    msg = msg.toString();
+  payload = msg.payload || '';
+  if (typeof payload === 'object'){
+    payload = JSON.stringify(payload);
+  } else if (typeof payload !== 'string'){
+    payload = payload.toString();
   }
 
-  if (msg === 'pythonshell@close'){
+  if (payload === 'pythonshell@close'){
     if (this.py != null){
       this.onClose()
       return
     } else {
       // trigger new execution
-      msg = ''
+      payload = ''
     }
   }
 
@@ -60,7 +60,7 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
       this.firstExecution = false
     }
   } else {
-    this.py = this.spawn(spawnCmd, ['-u', this.pyfile, msg], {
+    this.py = this.spawn(spawnCmd, ['-u', this.pyfile, payload], {
       cwd: this.pydir
     });
   }
@@ -69,7 +69,7 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
 
   // subsequence message, no need to setup callbacks
   if (this.stdInData && !this.firstExecution){
-    this.py.stdin.write(msg + '\n')
+    this.py.stdin.write(payload + '\n')
     return
   }
 
@@ -88,7 +88,8 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
 
     if (dataString.endsWith("\n")){
       if (this.continuous){
-        out({payload: dataString});
+        msg.payload = dataString;
+        out(msg);
         dataString = ''
       }
     }
@@ -114,7 +115,8 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
       err('exit code: ' + code + ', ' + errString);
       this.onStatus({fill:"red",shape:"dot",text:"Exited: " + code})
     } else if (!this.continuous){
-      out({payload: dataString.trim()});
+      msg.payload = dataString.trim();
+      out(msg);
       this.onStatus({fill:"green",shape:"dot",text:"Done"})
     } else {
       this.onStatus({fill:"yellow",shape:"dot",text:"Script Closed"})
@@ -126,7 +128,7 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
   });
 
   if (this.stdInData){
-    py.stdin.write(msg + '\n')
+    py.stdin.write(payload + '\n')
   }
 };
 

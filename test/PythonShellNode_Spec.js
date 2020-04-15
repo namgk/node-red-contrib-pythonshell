@@ -121,6 +121,21 @@ describe('Pythonshell Node', function() {
 			});
     });
 
+    it('should forward the whole message', function(done) {
+            let pyNode = new PythonshellNode({
+                pyfile: __dirname + "/sample.py"
+            });
+
+            pyNode.onInput({payload: "", otherPayload: "testval"}, function(result){
+              assert.notEqual(result.payload, null);
+              assert.equal(result.payload, 'hi');
+              assert.equal(result.otherPayload, "testval")
+              done()
+            }, function(err){
+              done(err)
+            });
+    })
+
     it('should output script ongoing result', function(done) {
     	this.timeout(10000);
 
