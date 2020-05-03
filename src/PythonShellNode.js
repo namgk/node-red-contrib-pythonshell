@@ -6,6 +6,7 @@ function PythonshellInNode(config) {
   }
   this.pythonExec = config.python3 ? "python3" : "python";
   this.pyfile = config.pyfile;
+  this.arguments = config.arguments || ""
   this.virtualenv = config.virtualenv;
 
   if (!fs.existsSync(this.pyfile)) {
@@ -51,7 +52,8 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
 
   if (this.stdInData){
     if (!this.py){
-      this.py = this.spawn(spawnCmd, ['-u', this.pyfile], {
+       args =
+      this.py = this.spawn(spawnCmd, ['-u', this.pyfile].concat(this.arguments.split(" ")), {
         cwd: this.pydir,
         detached: true
       });
@@ -60,7 +62,7 @@ PythonshellInNode.prototype.onInput = function(msg, out, err) {
       this.firstExecution = false
     }
   } else {
-    this.py = this.spawn(spawnCmd, ['-u', this.pyfile, payload], {
+    this.py = this.spawn(spawnCmd, ['-u', this.pyfile].concat((this.arguments || payload).split(" ")), {
       cwd: this.pydir
     });
   }
