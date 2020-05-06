@@ -25,6 +25,10 @@ f<!--
     <input type="text" id="node-input-pyfile" placeholder="/home/user/x.py">
   </div>
   <div class="form-row">
+    <label for="node-input-arguments"><i class="fa fa-tag"></i> Arguments </label>
+    <input type="text" id="node-input-arguments" placeholder="">
+  </div>
+  <div class="form-row">
     <label for="node-input-virtualenv"><i class="fa fa-tag"></i> Virtual Environment Path </label>
     <input type="text" id="node-input-virtualenv" placeholder="/home/user/venv">
   </div>
@@ -88,6 +92,7 @@ f<!--
     defaults: {
       name: {required: false},
       pyfile: {required: true},
+      arguments: {required: false},
       virtualenv: {required: false},
       continuous: {required: false},
       stdInData: {required: false},
